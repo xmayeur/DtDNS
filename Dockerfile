@@ -17,4 +17,4 @@ EXPOSE 80
 ENV NAME dtdns
 
 # Run app.py when the container launches
-CMD ["python", "DtDns.py"]
+CMD ["python", "DtDNS.py"]

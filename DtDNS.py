@@ -109,7 +109,7 @@ def main():
         try:
             conn = HTTPSConnection("www.dtdns.com")
             conn.putrequest('POST', '/api/autodns.cfm?' + params)
-            conn.endheaders()
+            conn.endhnano eaders()
             response = conn.getresponse()
             log.info("dtDNS:" + str(response.read()))
             conn.close()
