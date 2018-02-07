@@ -116,7 +116,7 @@ def main():
         except http.client.ResponseNotReady:
             log.critical("Problems while connecting to dtDNS!")
         except http.client.error:
-            log.critical("Network problems. [" + str(errordata) + "]")
+            log.critical("Network problems.")
             log.critical("Please be sure you are connected to the internet/network.")
         except:  # for things like socket.error which I couldn't catch "the usual way"...
             log.critical("Unexpected error!\nPython traceback:\n")
