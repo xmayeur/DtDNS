@@ -68,7 +68,7 @@ def main():
         config_file = open('dtdns.ini', 'r+')
     except IOError:
         try:
-            config_file = open('~/.dtdns.ini', 'r+')
+            config_file = open('/conf/dtdns.ini', 'r+')
         except IOError:
             log.critical('configuration file is missing')
             return
