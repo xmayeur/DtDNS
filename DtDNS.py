@@ -65,10 +65,10 @@ def main():
     config = configparser.ConfigParser()
     # Read config file - halt script on failure
     try:
-        config_file = open('DtDns.ini', 'r+')
+        config_file = open('dtdns.ini', 'r+')
     except IOError:
         try:
-            config_file = open('/etc/DtDns/ini', 'r+')
+            config_file = open('/etc/dtdns.ini', 'r+')
         except IOError:
             log.critical('configuration file is missing')
             return
