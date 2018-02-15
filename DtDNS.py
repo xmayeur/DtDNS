@@ -65,7 +65,7 @@ def main():
     config = configparser.ConfigParser()
     # Read config file - halt script on failure
     try:
-        config_file = open('DtDns2.ini', 'r+')
+        config_file = open('DtDns.ini', 'r+')
     except IOError:
         try:
             config_file = open('/etc/DtDns/ini', 'r+')
