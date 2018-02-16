@@ -1,4 +1,4 @@
 cd ~
-docker run -ti --name dtdns -v ~:/conf/ dtdns
-docker stop dtdns &&  docker rm dtdns
+docker run -ti --name dtdns -v $(pwd):/conf/ -v /var/log:/var/log/ xmayeur/dtdns:dtdns
+# docker stop dtdns &&  docker rm dtdns
 
