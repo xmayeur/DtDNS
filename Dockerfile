@@ -7,6 +7,11 @@ WORKDIR /dtdns
 # Copy the current directory contents into the container at /app
 ADD . /dtdns
 
+# install  cron
+RUN apt-get update && apt-get install -y cron
+COPY dtdns-cron /etc/cron.d/dtdns-cron
+RUN crontab /etc/cron.d/dtdns-cron
+
 # Install any needed packages specified in requirements.txt
 RUN pip install --trusted-host pypi.python.org -r requirements.txt
 
@@ -17,4 +22,5 @@ EXPOSE 80
 ENV NAME dtdns
 
 # Run app.py when the container launches
-CMD ["python", "DtDNS.py"]
+#CMD ["python", "DtDNS.py"]
+CMD ["cron", "-f"]
