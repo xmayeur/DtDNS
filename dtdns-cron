@@ -1,1 +1,1 @@
-0 3 * * * python /dtdns/DtDNS.py
+0 3 * * * /usr/local/bin/python /dtdns/DtDNS.py
