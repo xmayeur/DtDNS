@@ -8,7 +8,7 @@ WORKDIR /dtdns
 ADD . /dtdns
 
 # install  cron
-RUN apt-get update && apt-get install -y cron
+RUN apt-get update && apt-get install -y --no-install-recommends cron
 COPY dtdns-cron /etc/cron.d/dtdns-cron
 RUN crontab /etc/cron.d/dtdns-cron
 

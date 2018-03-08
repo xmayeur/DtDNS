@@ -14,7 +14,7 @@
 # check the lines between following delimiter for system specific information and adapt if needed.
 # ------------------------------------------------------------------------------------------------
 
-# import configparser
+import configparser
 # import http.client
 import requests
 import logging
@@ -63,23 +63,20 @@ def main():
     handler_file.setFormatter(formatter)
     log.addHandler(handler_file)
     
-    # config = configparser.ConfigParser()
+    config = configparser.ConfigParser()
     # Read config file - halt script on failure
-    # try:
-    #     config_file = open('DtDns2.ini', 'r+')
-    # except IOError:
-    #     try:
-    #         config_file = open('/etc/DtDns/ini', 'r+')
-    #     except IOError:
-    #         log.critical('configuration file is missing')
-    #         return
-    #
-    # config.read_file(config_file)
-    # PASS = b64decode(config.get('dtdns', 'password'))
-    # HOST = config.get('dtdns', 'host')
+    try:
+        config_file = open('DtDns.ini', 'r+')
+    except IOError:
+        try:
+            config_file = open('/etc/DtDns/ini', 'r+')
+        except IOError:
+            log.critical('configuration file is missing')
+            return
+    config.read_file(config_file)
+    url = config.get('dtdns', 'vault_url')
+    uid = config.get('dtdns', 'uid')
 
-    uid = 'dtdns'
-    url = 'http://lobo.local:5000/api/ID'
     r = requests.get(url=url + '?uid=%s' % uid)
     id = r.json()
     r.close()
