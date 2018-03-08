@@ -14,12 +14,13 @@
 # check the lines between following delimiter for system specific information and adapt if needed.
 # ------------------------------------------------------------------------------------------------
 
-import configparser
-import http.client
+# import configparser
+# import http.client
+import requests
 import logging
 import sys
-from base64 import b64decode
-from http.client import HTTPSConnection
+# from base64 import b64decode
+# from http.client import HTTPSConnection
 from logging.handlers import RotatingFileHandler
 from re import compile
 from sys import argv
@@ -62,20 +63,34 @@ def main():
     handler_file.setFormatter(formatter)
     log.addHandler(handler_file)
     
-    config = configparser.ConfigParser()
+    # config = configparser.ConfigParser()
     # Read config file - halt script on failure
-    try:
-        config_file = open('DtDns2.ini', 'r+')
-    except IOError:
-        try:
-            config_file = open('/etc/DtDns/ini', 'r+')
-        except IOError:
-            log.critical('configuration file is missing')
-            return
-    
-    config.read_file(config_file)
-    PASS = b64decode(config.get('dtdns', 'password'))
-    HOST = config.get('dtdns', 'host')
+    # try:
+    #     config_file = open('DtDns2.ini', 'r+')
+    # except IOError:
+    #     try:
+    #         config_file = open('/etc/DtDns/ini', 'r+')
+    #     except IOError:
+    #         log.critical('configuration file is missing')
+    #         return
+    #
+    # config.read_file(config_file)
+    # PASS = b64decode(config.get('dtdns', 'password'))
+    # HOST = config.get('dtdns', 'host')
+
+    uid = 'dtdns'
+    url = 'http://lobo.local:5000/api/ID'
+    r = requests.get(url=url + '?uid=%s' % uid)
+    id = r.json()
+    r.close()
+    if id['status'] == 200:
+        HOST = id['username']
+        PASS = id['password']
+    else:
+        HOST = 'unknown'
+        PASS = ''
+
+    IP = ipgetter.myip()
     
     if len(argv) > 0:
         if len(argv) > 4:
@@ -93,34 +108,24 @@ def main():
                 span = match.span()
                 IP = argv[3][span[0]:span[1]]
         elif len(argv) == 3:
-            err = 1  # default
             HOST = argv[1]
             PASS = argv[2]
-            IP = ipgetter.myip()
-    
-    # if err==1:
-    # 			print ("error determining IP")
-    # 		else:
-    # 			print ("updating to >"+str(IP)+"< ...")
-    # 	else:
-    # 		print ("usage: dnsflow HOSTNAME PASSWORD (IP)")
-    if HOST != "unknown":
-        params = urlencode({"id": HOST, "pw": PASS, "ip": ipgetter.myip(), "client": "DNSflow 0.1"})
+            
+    if HOST != 'unknown':
+        data = {"id": HOST, "pw": PASS, "ip": IP, "client": "DNSflow 0.1"}
+        params = urlencode(data)
+        
         try:
-            conn = HTTPSConnection("www.dtdns.com")
-            conn.putrequest('POST', '/api/autodns.cfm?' + params)
-            conn.endhnano eaders()
-            response = conn.getresponse()
-            log.info("dtDNS:" + str(response.read()))
-            conn.close()
-        except http.client.ResponseNotReady:
-            log.critical("Problems while connecting to dtDNS!")
-        except http.client.error:
-            log.critical("Network problems.")
-            log.critical("Please be sure you are connected to the internet/network.")
+            rr = requests.post('http://www.dtdns.com/api/autodns.cfm?'+params, headers=None)
+            log.info("DtDNS:"+rr.text)
+        except requests.HTTPError:
+            log.critical('HTTP error')
+        except requests.ConnectionError:
+            log.critical('Connection error')
         except:  # for things like socket.error which I couldn't catch "the usual way"...
             log.critical("Unexpected error!\nPython traceback:\n")
             print_exc()
+
     else:
         print("pass them on the command-line.")
         print("\nomitting IP will force the script to try to determine it automatically.")
